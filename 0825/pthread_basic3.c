@@ -27,7 +27,7 @@ int main(){
     data->x = 11;
     data->y = 8;
 
-    ret = pthread_create(&thread, NULL, t_function, (void*)&data);
+    ret = pthread_create(&thread, NULL, t_function, (void*)data);
 
     if(ret < 0){
         perror("pthread_create()\n");
