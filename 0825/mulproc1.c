@@ -73,7 +73,7 @@ void single_calc(){
     }
     gettimeofday(&end, NULL);
 
-    diff = end.tv_sec + end.tv_usec / 1000000.0 - begin.tv_sec + begin.tv_usec / 1000000.0;
+    diff = (end.tv_sec + end.tv_usec / 1000000.0) - (begin.tv_sec + begin.tv_usec / 1000000.0);
 
     printf("data: %ld\ntime: %f\n", result, diff);
 }
@@ -100,7 +100,7 @@ void dual_calc(){
         exit(-1);
     }
     else if(pid == 0){
-        for(int i=0; i<=50000000;i++){
+        for(int i=1; i<=50000000;i++){
             result += i;
         }
         make_shm(shmid, result);
@@ -116,7 +116,7 @@ void dual_calc(){
         gettimeofday(&end, NULL);
     }
 
-    diff = end.tv_sec + end.tv_usec / 1000000.0 - begin.tv_sec + begin.tv_usec / 1000000.0;
+    diff = (end.tv_sec + end.tv_usec / 1000000.0) - (begin.tv_sec + begin.tv_usec / 1000000.0);
     printf("data: %ld\ntime: %f\n",data ,diff);
 }
 
