@@ -1,4 +1,4 @@
-#include<stdlib.h>
+#include<stdlib.h>	//EXIT_FAILUERE, EXIT_SUCCESS
 #include<stdio.h>
 #include<string.h>
 #include<errno.h>
@@ -7,11 +7,7 @@
 #include<sys/types.h>
 #include<sys/ipc.h>
 #include<sys/msg.h>
-
-struct my_msg_st{
-	long int my_msg_type;	//메시지큐의 구조체에서 첫번째 데이터 타입 ling int는 반드시 필요
-	char some_text[BUFSIZ];
-};
+#include"common.h"
 
 int main(){
 
@@ -21,7 +17,7 @@ int main(){
 	long int msg_to_receive = 0;
 	
 	//step 1. msgget()
-	msgid = msgget((key_t)1234, 0666 | IPC_CREAT);
+	msgid = msgget(KEY_VALUE, 0666 | IPC_CREAT);
 	
 	//정상적으로 메시지큐가 생성되지 않는 경우
 	if(msgid == -1){
