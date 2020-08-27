@@ -68,7 +68,7 @@ void single_calc(){
     printf("Single\n");
     result = 0;
     gettimeofday(&begin, NULL);
-    for(int i=0;i<=100000000;i++){
+    for(int i=0;i<=1000000000;i++){
         result += i;
     }
     gettimeofday(&end, NULL);
@@ -100,14 +100,14 @@ void dual_calc(){
         exit(-1);
     }
     else if(pid == 0){
-        for(int i=1; i<=50000000;i++){
+        for(int i=1; i<=500000000;i++){
             result += i;
         }
         make_shm(shmid, result);
         exit(0);
     }
     else{
-        for(int i=50000001;i<=100000000;i++){
+        for(int i=500000001;i<=1000000000;i++){
             result += i;
         }
         wait(&status);
