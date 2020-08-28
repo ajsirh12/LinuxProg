@@ -7,7 +7,9 @@
 #include <signal.h>
 #include <sys/wait.h>
 
-#define BUF_SIZE 30
+#define BUF_SIZE 8096
+#define LLIST "ls"
+#define DDN "dn "
 
 void read_childproc(int sig){
     pid_t pid;
@@ -26,6 +28,17 @@ void error_handling(char *message){
 int main(int argc, char* argv[]){
     //시그널 핸들러 등록
     signal(SIGCHLD, read_childproc);
+
+    FILE *read_fp;
+    char buffer[BUFSIZ + 1];
+    int chars_read;
+    memset(buffer, '\0', sizeof(buffer));
+
+    char* filename;
+    FILE* fp;
+    int read_cnt;
+
+    char* info = "Input \"ls\" or \"dn filename\"";
 
     //socket file descriptor
     int serv_sock, clnt_sock;
@@ -81,9 +94,41 @@ int main(int argc, char* argv[]){
         else if(pid == 0){  //자식프로세스
             close(serv_sock);
             //데이터처리
-            while((str_len = read(clnt_sock, buf, BUF_SIZE))!=0){
-                write(clnt_sock, buf, str_len);
+            while((str_len = read(clnt_sock, buf, BUF_SIZE-1))!=0){
+                buf[str_len] = 0;
+                buf[str_len-1] = 0;
+                printf("%s\n", buf);                
+                if(strcmp(buf, LLIST) == 0){
+                    read_fp = popen(LLIST, "r");
+                    if (read_fp != NULL) {
+                        chars_read = fread(buffer, sizeof(char), BUFSIZ, read_fp);
+                        if (chars_read > 0) 
+                        {
+                            write(clnt_sock, buffer, strlen(buffer));
+                        }
+                        pclose(read_fp);
+                    }
+                }
+                else if(strncmp(buf, DDN, 3) == 0){
+                    filename = strtok(buf, " ");
+                    filename = strtok(NULL, " ");
+                    fp=fopen(filename, "rb"); 
+                    while(1){
+                            read_cnt=fread((void*)buf, 1, BUF_SIZE, fp);
+                            if(read_cnt<BUF_SIZE){
+                                write(clnt_sock, buf, read_cnt);
+                                break;
+                            }
+                            write(clnt_sock, buf, BUF_SIZE);
+                        }
+                    fclose(fp);
+                }
+                else{
+                    write(clnt_sock, info, strlen(info));
+                    //write(clnt_sock, buf, strlen(buf));
+                }
             }
+//            *buf = '\0';
             close(clnt_sock);
             printf("client disconnected...\n");
             return 0;

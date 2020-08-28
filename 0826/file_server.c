@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	clnt_adr_sz=sizeof(clnt_adr);    
 	clnt_sd=accept(serv_sd, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
 	
-	write(clnt_sd, filename, BUF_SIZE);
+	//write(clnt_sd, filename, BUF_SIZE);
 	while(1)
 	{
 		read_cnt=fread((void*)buf, 1, BUF_SIZE, fp);
